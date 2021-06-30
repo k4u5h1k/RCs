@@ -14,38 +14,67 @@ export PS1="Kaushik %1~ %# "
 export CNG_PATH=/Users/Kaushik/stuff/programs/iot/contiki-ng
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export HISTSIZE=5000
+export HISTSIZE=100000
+export HISTORY_IGNORE="(&|ls|[bf]g|vi|history|exit|pwd|clear|mount|umount|[ \t]*)"
 export SAVEHIST=$HISTSIZE
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
-alias center="/Users/Kaushik/stuff/code/center/centerterm.applescript"
+alias center="/Users/Kaushik/stuff/code/utilities/center/centerterm.applescript"
 alias vboxmanage="VBoxManage"
-alias python="python3"
 alias ip="ifconfig | grep \"inet \" | awk '{print \$2}'"
 alias pip="pip3"
-alias vim="mvim"
+# alias vim="mvim"
 alias sz="source ~/.zshrc"
-alias .v="mvim ~/.vimrc"
-alias .z="mvim ~/.zshrc"
+alias .v="vim ~/.vimrc"
+alias .z="vim ~/.zshrc"
 alias la="ls -la"
 alias st="cd ~/stuff"
 alias ..="cd .."
 alias ...="cd ../.."
+alias vi="nvim"
 alias history="history 0"
-alias muse="cd ~/Documents/Music/"
 alias install='HOMEBREW_NO_AUTO_UPDATE=1 brew install'
-alias yesleep="sudo pmset -b sleep 0; sudo pmset -b disablesleep 0"
-alias nosleep="sudo pmset -b sleep 0; sudo pmset -b disablesleep 1"
+alias yesleep="echo '*********' | sudo -S pmset -b sleep 0; sudo pmset -b disablesleep 0"
+alias nosleep="echo '*********' | sudo -S pmset -b sleep 0; sudo pmset -b disablesleep 1"
 alias checknet="ping -c1 -t2 google.com 1>/dev/null 2>&1 0>&1 && echo -e \"\e[32mOnline boi\e[0m\" || echo \"\e[91mSorry offline boi\e[0m\""
-alias vi="nvim -u /Users/Kaushik/alternate.vim"
-# alias kali="docker run -ti --mount src=kali-root,dst=/root --mount src=kali-postgres,dst=/var/lib/postgresql kali /bin/bash"
-alias kali="vboxmanage startvm Kali-Linux-2020.2-vbox-amd64"
-alias parrot="vboxmanage startvm \"Parrot Security\""
 alias jump="docker exec -it "
 alias site="open ~/stuff/site/index.html"
-alias ubuntu="docker run -ti  ubuntu"
-alias contiker="docker run --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --mount type=bind,source=/Users/Kaushik/stuff/programs/iot/contiki-ng,destination=/home/user/contiki-ng -ti contiker/contiki-ng bash --rcfile ~/contiki-ng/.bashrc"
 alias hip="ifconfig utun2 | grep \"inet \" | cut -d ' ' -f 2 | cut -d ' ' -f 1"
-alias pentest="ssh -i ~/Azure/pentest_key.pem kaushik@kaushik.me"
+alias azure="ssh -i ~/.azure/key.pem kaushik@kaushik.me"
+alias typora="open -a typora"
+alias httptor="tor -f /usr/local/etc/tor/torrc.sample"
+alias tunnel="autossh -M 0 -fN -R 0.0.0.0:4444:localhost:22 -v -i ~/.azure/key.pem kaushik@kaushik.me"
+alias screenshare="autossh -M 0 -fN -R 0.0.0.0:5900:localhost:5900 -v -i ~/.azure/key.pem kaushik@kaushik.me"
+alias bindings="cat ~/stuff/misc/tmux_notes.txt"
+alias docs="open ~/stuff/code/docs/python-3.7.10-docs-html/index.html"
+
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden'
+bindkey -v
+bindkey -M viins 'jj' vi-cmd-mode
+export KEYTIMEOUT=20
+
+function cc(){
+    echo -n $1 | pbcopy
+}
+
+function publish(){
+    jekyll build
+    cd _site && pushmedaddy 'fixed ROS title'
+    ssh -i ~/.azure/key.pem -t kaushik@kaushik.me 'cd ~/musings/savvy && git pull'
+    echo 'done'
+}
+
+function newpost(){
+    ~/stuff/code/utilities/new_post.sh $1
+}
+
+function esp(){
+    rshell --port /dev/tty.usbserial-0001 --baud 115200 -e 'vi'
+}
+
+function e(){
+    fzf | vi `tr -d '\n'`
+}
 
 function song(){
     osascript /Users/Kaushik/stuff/code/spotify.applescript
@@ -53,6 +82,10 @@ function song(){
 
 function fuzz(){
     ffuf -c -w /Users/Kaushik/stuff/wordlists/directory-list-2.3-medium.txt -u $1 -e $2 -of csv -o ffuf.out
+}
+
+function pcop(){
+    echo '*******' | base64 -d | pbcopy
 }
 
 function server(){
@@ -80,15 +113,15 @@ function makepost(){
 }
 
 function send(){
- scp -i ~/Azure/pentest_key.pem $1 kaushik@kaushik.me:$2
+ scp -i ~/Azure/pentest_key.pem ${@} kaushik@kaushik.me:/home/kaushik/sent
 }
 
 function host(){
-    echo "password" | sudo -S mvim /etc/hosts
+    echo "*********" | sudo -S mvim /etc/hosts
 }
 
 function getcolor(){
-    cat ~/colors.sh | grep "$1"
+    cat ~/stuff/code/utilities/colors.sh | grep "$1"
 }
 
 function grepfor(){
@@ -109,7 +142,11 @@ function office(){
 }
 
 function vpn(){
-    echo 'password'|sudo -S openvpn ~/Downloads/k4u5h1k.ovpn
+    echo '*********'|sudo -S openvpn ~/Downloads/k4u5h1k.ovpn
+}
+
+function findhere(){
+    find . -name "$1" 2>/dev/null
 }
 
 function friends(){
@@ -126,13 +163,9 @@ function jnb(){
     jupyter notebook $1 > /dev/null 2>&1 &
 }
 
-function lifecent(){
-    ~/stuff/code/date.sh
-}
-
-function jailbreak(){
-    /Applications/checkra1n.app/Contents/MacOS/checkra1n;
-}
+function base(){
+    tmux attach -t base >/dev/null 2>&1 || tmux new -s base
+} 
 
 function play(){
     nohup afplay "$1" &;
@@ -147,51 +180,15 @@ function py(){
 }
 
 function c(){
-    clang "$1" -o "$2" &&./a.out&&rm a.out
+    clang "$1" && ./a.out && rm a.out
 }
 
 function cpp(){
-    g++ "$1"&&./a.out&&rm a.out
+    g++ "$1" && ./a.out && rm a.out
 }
-
-# function spot(){
-#     spotifydl -o ~/Documents/Music "$1" &
-# }
-
-# function spotdown(){
-#     open /Users/Kaushik/stuff/programs/Spotify.dmg
-#     wait
-#     sleep 1
-#     rm -rf /Applications/Spotify.app
-#     wait
-#     sleep 1
-#     cp -a /Volumes/Spotify/Spotify.app /Applications/Spotify.app
-#     wait
-#     diskutil unmountDisk /dev/disk3
-# }
 
 function crack(){
     python3 /Users/Kaushik/stuff/projects/crypto/cracker.py "$1"
-}
-
-function cd() {
-    if [[ "$#" != 0 ]]; then
-        builtin cd "$@";
-        return
-    fi
-    while true; do
-        local lsd=$(echo ".." && ls -p | grep '/$' | sed 's;/$;;')
-        local dir="$(printf '%s\n' "${lsd[@]}" |
-            fzf --reverse --preview '
-                __cd_nxt="$(echo {})";
-                __cd_path="$(echo $(pwd)/${__cd_nxt} | sed "s;//;/;")";
-                echo $__cd_path;
-                echo;
-                ls -p -G "${__cd_path}";
-        ')"
-        [[ ${#dir} != 0 ]] || return 0
-        builtin cd "$dir" &> /dev/null
-    done
 }
 
 function fh() {
@@ -245,13 +242,12 @@ export HISTCONTROL=ignorespace
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # PATH modifications
-export PATH="/usr/local/opt/python@3.7/bin:/usr/local/opt/python@3.8/bin:/opt/metasploit-framework/bin:/usr/local/sbin:/Users/Kaushik/exploit-database:/Users/Kaushik/stuff/programs:/Users/Kaushik/stuff/ctf/tools:/Users/Kaushik/stuff/code:/Users/Kaushik/Library/Python/3.7/bin:$PATH"
+export PATH="/usr/local/opt/python@3.7/bin:/usr/local/opt/python@3.8/bin:/opt/metasploit-framework/bin:/usr/local/sbin:/Users/Kaushik/stuff/exploit-database:/Users/Kaushik/stuff/programs:/Users/Kaushik/stuff/ctf/tools:/Users/Kaushik/stuff/code:/Users/Kaushik/Library/Python/3.7/bin:$PATH"
 
 # Autojump setting
 [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 export EDITOR='nvim'
 export DISABLE_AUTO_TITLE=true
-alias pg_start='pg_ctl -D /usr/local/var/postgres/db -l /usr/local/var/postgres/db/server.log start'
 
 # Good stuff
 # Moving the cursor:
@@ -350,10 +346,11 @@ alias pg_start='pg_ctl -D /usr/local/var/postgres/db -l /usr/local/var/postgres/
 export OPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-alias httptor="tor -f /usr/local/etc/tor/torrc.sample"
+# [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-    tmux attach -t base || tmux new -s base
+if [ "$TMUX" = "" ]
+then
+    base
 fi
+export PATH="$HOME/.gem/ruby/2.6.0/bin:$PATH"
