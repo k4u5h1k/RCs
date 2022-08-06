@@ -249,7 +249,6 @@ function pushmedaddy(){
 }
 
 function publish(){
-    export AWS_PROFILE=user1
     cd ~/stuff/projects/jekyll/savvy/
     jekyll build
     cd _site && aws s3 cp . s3://savvy.kaushik.me --recursive --exclude ".git/*"
@@ -258,7 +257,6 @@ function publish(){
 }
 
 function portpublish(){
-    export AWS_PROFILE=user1
     cd ~/stuff/projects/jekyll/portfolio/
     jekyll build
     cd _site && aws s3 cp . s3://kaushik.me --recursive --exclude ".git/*"
